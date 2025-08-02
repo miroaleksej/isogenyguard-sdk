@@ -103,7 +103,7 @@ By monitoring these topological characteristics, IsogenyGuard provides an early 
 
 ## 📚 Documentation
 
-For complete documentation, see our [Read the Docs page](https://isogenyguard.readthedocs.io).
+For complete documentation, see our [Read the Docs page](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/Docs).
 
 Key documentation sections:
 - [Installation Guide](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/Installation%20Guide.md)
