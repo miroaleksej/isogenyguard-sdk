@@ -1,8 +1,3 @@
-"""
-IsogenyGuard SDK - Core functionality tests
-Tests for private key recovery and special point detection
-"""
-
 import pytest
 import numpy as np
 from isogenyguard.core import recover_private_key, check_special_points
