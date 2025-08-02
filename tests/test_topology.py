@@ -1,8 +1,3 @@
-"""
-IsogenyGuard SDK - Topology analysis tests
-Tests for Betti numbers calculation and topological entropy
-"""
-
 import pytest
 import numpy as np
 from isogenyguard.topology import check_betti_numbers, calculate_topological_entropy
