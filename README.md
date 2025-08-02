@@ -133,7 +133,7 @@ This integration demonstrates how topological analysis (Theorem 21) translates t
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to:
+We welcome contributions! Please see our [CONTRIBUTING.md](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/CONTRIBUTING.md) for guidelines on how to:
 - Report bugs
 - Suggest new features
 - Submit pull requests
