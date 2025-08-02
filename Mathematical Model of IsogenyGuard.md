@@ -199,7 +199,8 @@ This mathematical model transforms theoretical insights into practical security 
 
 ___
 
-# Complete Signature Space Characterization in ECDSA: From Bijective Parameterization to Hypercube Representation
+# Complete Signature Space Characterization in ECDSA: 
+## From Bijective Parameterization to Hypercube Representation
 
 <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/4473ce83-f179-4998-b673-ac669ed239d4" />
 
