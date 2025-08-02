@@ -1,28 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Quantum Topological Emulator (QTE) - Full Scientific Implementation
-
-This is a complete, scientifically rigorous implementation of the Quantum Topological
-Emulator based on the theoretical framework from the research paper "Complete Signature
-Space Characterization in ECDSA: From Bijective Parameterization to Hypercube Representation".
-
-The implementation strictly follows Theorem 19 (Existence of All Signatures) and
-Theorem25 (Quantum Topological Compression) with mathematical proofs and experimental
-validation.
-
-Key improvements over previous versions:
-- Removed all empirical coefficients, replaced with mathematically derived formulas
-- Added rigorous implementation of artificial signature generation via the ur-uz table
-- Implemented experimental validation using research data (d=27, n=79)
-- Enhanced documentation with references to theorems from the research paper
-- Added comprehensive test suite for topological integrity verification
-
-Version: 3.0
-Date: 2025-08-05
-Authors: [Your Name], [Co-authors]
-"""
-
 import numpy as np
 import gudhi as gd
 import cupy as cp
