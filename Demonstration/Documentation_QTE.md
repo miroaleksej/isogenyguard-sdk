@@ -32,18 +32,6 @@ Unlike conventional quantum emulators, QTE specifically focuses on preserving an
 - Implements standard quantum gates (Hadamard, CNOT, etc.)
 - Tracks state evolution for topological analysis
 
-## Installation
-
-```bash
-# Install from PyPI (recommended)
-pip install quantum-topological-emulator
-
-# Or install from source
-git clone https://github.com/yourusername/qte.git
-cd qte
-pip install -e .
-```
-
 ## Basic Usage
 
 ### Quantum State Emulation with Topological Analysis
