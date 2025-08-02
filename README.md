@@ -120,6 +120,8 @@ Key documentation sections:
 
 ## 💼 Real-world Integration
 
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/303e1a83-f003-4318-8956-596f017c759e" />
+
 IsogenyGuard integrates seamlessly with existing security infrastructure:
 
 ```python
