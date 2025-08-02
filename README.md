@@ -109,7 +109,7 @@ Key documentation sections:
 - [Installation Guide](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/Installation%20Guide.md)
 - [User Guide](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/User%20Guide.md)
 - [API Reference](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/API%20Reference.md)
-- [Security Principles](https://isogenyguard.readthedocs.io/en/latest/security.html)
+- [Security Principles](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/Security%20Principles.md)
 - [Research Background](https://isogenyguard.readthedocs.io/en/latest/research.html)
 
 ## 💼 Real-world Integration
