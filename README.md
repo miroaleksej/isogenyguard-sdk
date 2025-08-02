@@ -147,6 +147,8 @@ All contributions must align with our mission: **protection, not exploitation**.
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/LICENSE) file for details.
 
+## Email: miro-aleksej@yandex.ru
+
 ## 🙏 Acknowledgments
 
 This work is based on scientific research on topological analysis of isogeny spaces. We thank the cryptographic research community for their foundational work that made this project possible.
