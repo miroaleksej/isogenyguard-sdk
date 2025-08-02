@@ -114,6 +114,10 @@ Key documentation sections:
 - [Research Background](https://isogenyguard.readthedocs.io/en/latest/research.html)
 - [Mathematical Model](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Mathematical%20Model%20of%20IsogenyGuard.md)
 
+___
+
+## The future
+
 <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/0574aa26-9aa8-4a59-8f07-fadac7340e01" />
 
 - [Demonstration](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/Demonstration)
