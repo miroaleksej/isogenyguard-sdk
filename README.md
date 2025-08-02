@@ -4,7 +4,8 @@
 [![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
 [![PyPI Package](https://img.shields.io/pypi/v/isogenyguard.svg)](https://pypi.org/project/isogenyguard/)
 [![Documentation Status](https://readthedocs.org/projects/isogenyguard/badge/?version=latest)](https://isogenyguard.readthedocs.io/en/latest/?badge=latest)
-[![CI/CD](https://github.com/miroaleksej/isogenyguard-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/miroaleksej/isogenyguard-sdk/actions)
+![Visitors](https://api.visitorbadge.io/api/visitors?path=https://github.com/yourrepo&label=Visitors&countColor=%23263759)
+
 
 > **"Topology is not a hacking tool, but a microscope for vulnerability diagnostics. Ignoring it means building cryptography on sand."**
 
