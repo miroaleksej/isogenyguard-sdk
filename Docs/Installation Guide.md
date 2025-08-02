@@ -163,12 +163,3 @@ A successful test run should show all tests passing, confirming that:
    ```bash
    pip install tensorflow  # For GPU-accelerated computations
    ```
-
-## 📚 Next Steps
-
-After successful installation, proceed to:
-1. [User Guide](user_guide.md) - Learn how to use IsogenyGuard for security analysis
-2. [API Reference](api.md) - Detailed documentation of all functions
-3. [Real-world Examples](examples.md) - Practical applications of topological security analysis
-
-> "Topology is not a hacking tool, but a microscope for vulnerability diagnostics. Ignoring it means building cryptography on sand."
