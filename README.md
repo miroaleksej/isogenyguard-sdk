@@ -1,6 +1,6 @@
 # IsogenyGuard SDK
 
-<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/03ebe737-bcd0-427a-be62-ea34dd9c7459" />
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/c24b920b-8685-4bf6-b232-a91276a1e680" />
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
