@@ -113,6 +113,7 @@ Key documentation sections:
 - [Security Principles](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/Security%20Principles.md)
 - [Research Background](https://isogenyguard.readthedocs.io/en/latest/research.html)
 - [Mathematical Model](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Mathematical%20Model%20of%20IsogenyGuard.md)
+- [QTE](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Demonstration/QuantumTopologicalEmulator.py)
 
 ## 💼 Real-world Integration
 
