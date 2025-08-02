@@ -102,17 +102,6 @@ if not security_report.secure:
    - Check for anomalous structures in persistent homology
 5. **Protection**: Apply recommended security measures if vulnerabilities are found
 
-## 📚 Documentation
-
-For complete documentation, see our [Read the Docs page](https://cybersec.readthedocs.io).
-
-Key documentation sections:
-- [Installation Guide](https://cybersec.readthedocs.io/en/latest/installation.html)
-- [User Guide](https://cybersec.readthedocs.io/en/latest/user_guide.html)
-- [API Reference](https://cybersec.readthedocs.io/en/latest/api.html)
-- [Security Principles](https://cybersec.readthedocs.io/en/latest/security.html)
-- [Research Background](https://cybersec.readthedocs.io/en/latest/research.html)
-
 ## 💡 Why Topological Security Analysis?
 
 Traditional security analysis often focuses on cryptographic algorithms in isolation, ignoring the topological structure of the implementation space. Our research demonstrates that:
