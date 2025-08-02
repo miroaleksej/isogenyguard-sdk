@@ -23,6 +23,8 @@ IsogenyGuard SDK is the world's first topological auditing framework for cryptog
 
 ## 📊 Theoretical Foundation
 
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/dfcdba55-1477-49ad-9b89-07a230c02a99" />
+
 IsogenyGuard is built on the following key research results:
 
 1. **Theorem 21**: The isogeny space for a fixed base curve is topologically equivalent to an (n-1)-dimensional torus
