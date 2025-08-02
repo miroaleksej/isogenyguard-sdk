@@ -156,3 +156,9 @@ This work is based on scientific research on topological analysis of isogeny spa
 
 > **Our Mission**: To transform theoretical cryptographic research into practical security tools that protect systems, not exploit them.  
 > **Remember**: "Topology is not a hacking tool, but a microscope for vulnerability diagnostics."
+
+___
+
+## Hashtags for IsogenyGuard SDK
+
+#Cryptography #Blockchain #Security #Research #OpenSource #TopologicalSecurity #BettiNumbers #ECDSA #PostQuantum #IsogenyBased #CSIDH #TopologicalEntropy #VulnerabilityDetection #MathematicalCryptography #AlgebraicTopology #PersistentHomology #AdaptiveTDA #DigitalSignatures #SecurityAudit #ProtectionNotExploitation
