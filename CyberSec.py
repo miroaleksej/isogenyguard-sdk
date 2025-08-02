@@ -14,8 +14,8 @@ Key features based on the research:
 This system is designed for protection, not for exploitation - it identifies
 vulnerabilities so they can be fixed, not exploited.
 
-Author: [Your Name]
-Date: 2023
+Author: [A. Mironov]
+Date: 2025
 """
 
 import math
