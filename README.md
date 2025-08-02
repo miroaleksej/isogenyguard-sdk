@@ -163,7 +163,7 @@ This work is based on scientific research on topological analysis of isogeny spa
 
 > **Our Mission**: To transform theoretical cryptographic research into practical security tools that protect systems, not exploit them.  
 > **Remember**: "Topology is not a hacking tool, but a microscope for vulnerability diagnostics."
-
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/ac3c3cc8-f36b-4898-bad1-775a32c3fd98" />
 ___
 
 ## Hashtags for IsogenyGuard SDK
