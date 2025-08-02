@@ -1,33 +1,36 @@
 # IsogenyGuard SDK
-![Visitors](https://api.visitorbadge.io/api/visitors?path=https://github.com/yourrepo&label=Visitors&countColor=%23263759)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
+[![PyPI Package](https://img.shields.io/pypi/v/isogenyguard.svg)](https://pypi.org/project/isogenyguard/)
+[![Documentation Status](https://readthedocs.org/projects/isogenyguard/badge/?version=latest)](https://isogenyguard.readthedocs.io/en/latest/?badge=latest)
+[![CI/CD](https://github.com/miroaleksej/isogenyguard-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/miroaleksej/isogenyguard-sdk/actions)
 
 > **"Topology is not a hacking tool, but a microscope for vulnerability diagnostics. Ignoring it means building cryptography on sand."**
 
 IsogenyGuard SDK is the world's first topological auditing framework for cryptographic key security. Based on groundbreaking research in algebraic topology applied to isogeny-based cryptosystems, it transforms theoretical insights into practical security tools that protect systems rather than exploit vulnerabilities.
 
-## ð¬ Core Features
+## 🔬 Core Features
 
-- **Topological Security Auditing**: Verify cryptographic implementations using Betti numbers (Î²â=1, Î²â=2, Î²â=1)
+- **Topological Security Auditing**: Verify cryptographic implementations using Betti numbers (β₀=1, β₁=2, β₂=1)
 - **Vulnerability Detection**: Identify weaknesses with F1-score up to 0.91 as validated in research
 - **Private Key Protection**: Gradient-based analysis to detect potential key recovery vulnerabilities
 - **AdaptiveTDA Compression**: Achieve 12.7x compression ratio while preserving 96% of topological information
 - **Real-time Monitoring**: Track topological entropy (h_top) to ensure cryptographic strength
 - **Protection, Not Exploitation**: All methods designed to strengthen security, not to exploit vulnerabilities
 
-## ð Theoretical Foundation
+## 📊 Theoretical Foundation
 
 IsogenyGuard is built on the following key research results:
 
 1. **Theorem 21**: The isogeny space for a fixed base curve is topologically equivalent to an (n-1)-dimensional torus
 2. **Theorem 9**: Private key recovery through special point analysis
-3. **Theorem 24**: Topological entropy h_top = log(Î£|e_i|) as security metric
+3. **Theorem 24**: Topological entropy h_top = log(Σ|e_i|) as security metric
 4. **Theorem 16**: AdaptiveTDA compression preserving sheaf cohomologies
 
-Our research demonstrates that systems with anomalous Betti numbers or low topological entropy (h_top < log n - Î´) are vulnerable to attacks, while secure implementations maintain the expected topological structure.
+Our research demonstrates that systems with anomalous Betti numbers or low topological entropy (h_top < log n - δ) are vulnerable to attacks, while secure implementations maintain the expected topological structure.
 
-## ð Quick Start
+## 🚀 Quick Start
 
 ### Installation
 
@@ -51,7 +54,7 @@ j_invariants = [0.72, 0.68, 0.75, 0.65, 0.82]
 result = check_betti_numbers(j_invariants)
 
 print("Topological audit results:")
-print(f"Betti numbers: Î²â={result['betti_0']}, Î²â={result['betti_1']}, Î²â={result['betti_2']}")
+print(f"Betti numbers: β₀={result['betti_0']}, β₁={result['betti_1']}, β₂={result['betti_2']}")
 print(f"Topological entropy: {result['topological_entropy']:.4f}")
 print(f"Security status: {'SECURE' if result['is_secure'] else 'VULNERABLE!'}")
 
@@ -75,29 +78,29 @@ pip install ripser scikit-learn
 python examples/basic_usage.py
 ```
 
-## ð Security Verification Process
+## 📈 Security Verification Process
 
 1. **Data Collection**: Gather ECDSA signatures for analysis
 2. **Topological Analysis**: Compute persistent homology and Betti numbers
 3. **Entropy Calculation**: Determine topological entropy h_top
 4. **Security Assessment**:
-   - Verify Betti numbers match theoretical values (Î²â=1, Î²â=2, Î²â=1)
-   - Ensure h_top > log n - Î´
+   - Verify Betti numbers match theoretical values (β₀=1, β₁=2, β₂=1)
+   - Ensure h_top > log n - δ
    - Check for anomalous structures in persistent homology
 5. **Protection**: Apply recommended security measures if vulnerabilities are found
 
-## ð¡ Why Topological Security Analysis?
+## 💡 Why Topological Security Analysis?
 
 Traditional security analysis often focuses on cryptographic algorithms in isolation, ignoring the topological structure of the implementation space. Our research demonstrates that:
 
-- Secure ECDSA implementations exhibit specific topological properties (Betti numbers Î²â=1, Î²â=2, Î²â=1)
+- Secure ECDSA implementations exhibit specific topological properties (Betti numbers β₀=1, β₁=2, β₂=1)
 - Vulnerable implementations show anomalous topological structures
 - Topological entropy h_top provides a quantitative security metric
 - These properties are detectable *before* an actual attack can be mounted
 
 By monitoring these topological characteristics, IsogenyGuard provides an early warning system for cryptographic vulnerabilities.
 
-## ð Documentation
+## 📚 Documentation
 
 For complete documentation, see our [Read the Docs page](https://isogenyguard.readthedocs.io).
 
@@ -108,7 +111,7 @@ Key documentation sections:
 - [Security Principles](https://isogenyguard.readthedocs.io/en/latest/security.html)
 - [Research Background](https://isogenyguard.readthedocs.io/en/latest/research.html)
 
-## ð¼ Real-world Integration
+## 💼 Real-world Integration
 
 IsogenyGuard integrates seamlessly with existing security infrastructure:
 
@@ -127,7 +130,7 @@ security_report = analyze_ecdsa_signatures(wallet_signatures)
 
 This integration demonstrates how topological analysis (Theorem 21) translates to real security metrics with F1-score up to 0.91 as validated in Table 3 of the research.
 
-## ð¤ Contributing
+## 🤝 Contributing
 
 We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to:
 - Report bugs
@@ -137,11 +140,11 @@ We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for 
 
 All contributions must align with our mission: **protection, not exploitation**.
 
-## ð License
+## 📜 License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-## ð Acknowledgments
+## 🙏 Acknowledgments
 
 This work is based on scientific research on topological analysis of isogeny spaces. We thank the cryptographic research community for their foundational work that made this project possible.
 
