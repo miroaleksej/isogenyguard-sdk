@@ -4,7 +4,6 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/miroaleksej/cybersec/ci.yml?branch=main)](https://github.com/miroaleksej/cybersec/actions)
 [![Documentation Status](https://img.shields.io/readthedocs/cybersec)](https://cybersec.readthedocs.io)
 
 > **"Topology is not a hacking tool, but a microscope for vulnerability diagnostics. Ignoring it means building cryptography on sand."**
