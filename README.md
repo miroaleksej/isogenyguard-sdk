@@ -146,9 +146,7 @@ This structure enables **topological auditing** of cryptographic implementations
 
 ### 3. **Gradient-Based Private Key Recovery (Theorem 5)**
 We derive a **novel analytical formula** for private key recovery:
-$$
-d = -\frac{\partial r / \partial u_z}{\partial r / \partial u_r} \mod n,
-$$
+$$d = -\frac{\partial r / \partial u_z}{\partial r / \partial u_r} \mod n,$$
 based on finite differences in the $(u_r, u_z)$ space. This **gradient method** allows detection and exploitation of weak nonces in real-time, with **98.7% accuracy** in experimental validation.
 
 ### 4. **Topological Entropy as a Security Metric**
