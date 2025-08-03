@@ -135,8 +135,7 @@ This work introduces a series of **fundamental theoretical and practical advance
 ### 1. **Bijective Parameterization of ECDSA Signatures**
 We prove a **fundamental bijection** between the space of ECDSA signatures $(r, s, z)$ and a 2D parameter space $(u_r, u_z)$, where:
 $$
-u_r = r \cdot s^{-1} \mod n,\quad u_z = z \cdot s^{-1} \mod n.
-$$
+u_r = r \cdot s^{-1} \mod n,$$ $$\quad u_z = z \cdot s^{-1} \mod n.$$
 This reduces the analysis of cryptographic signatures from a 3D discrete space to a **topologically structured 2D torus**, enabling geometric and topological methods for security analysis.
 
 ### 2. **Topological Structure of ECDSA: Torus Representation**
