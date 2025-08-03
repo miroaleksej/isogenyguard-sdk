@@ -125,9 +125,6 @@ ___
 ___
 
 In the [Demonstration](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/Demonstration) folder, you'll find two practical examples showcasing the real-world applications of our [scientific work](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Mathematical%20Model%20of%20IsogenyGuard.md): **QTE (Quantum Topological Emulator)** and **EarthSim**. These demonstrations illustrate how the advanced mathematical frameworks described in our research — including topological data analysis, sparse Gaussian processes, and quantum-state compression — are implemented in practice. The QTE example highlights quantum system emulation with topological compression, enabling the simulation of larger quantum states, while the EarthSim example demonstrates high-fidelity geospatial and climate modeling with physically-based simulations and rigorous validation. Together, they represent the power of integrating topology, physics, and high-performance computing for cutting-edge scientific computing.
-___
-
-Certainly! Below is a **professional and comprehensive "Scientific Novelty" section** for the `README.md` file of your GitHub repository, written in English and based on the provided scientific work (`Научная работа.md`). This section highlights the groundbreaking contributions of your research in topology, cryptography, and high-energy physics.
 
 ---
 
