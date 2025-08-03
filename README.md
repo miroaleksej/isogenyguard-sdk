@@ -178,6 +178,7 @@ Our results are not theoretical only — they are **engineered for real-world de
 ---
 
 These innovations bridge **pure mathematics**, **cryptography**, and **high-performance computing**, offering **provably secure**, **topologically robust**, and **computationally efficient** solutions for next-generation scientific and industrial challenges.
+___
 
 ## 💼 Real-world Integration
 
