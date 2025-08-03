@@ -1,4 +1,3 @@
-```markdown
 # Hypercube-1: Quantum Topological Simulator
 
 **A revolutionary system for predicting new materials and physical phenomena through multidimensional topological analysis.**
