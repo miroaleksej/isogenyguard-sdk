@@ -1,34 +1,36 @@
 """
-IsogenyGuard — Realistic unit test for private key recovery
-Simulates real-world workflow: from signatures to d via (u_r, u_z) and R_x table.
+IsogenyGuard — Realistic end-to-end test for private key recovery
+Workflow: Public key → generate signatures → find repeated R_x → recover d
 """
 
 import pytest
-from unittest.mock import MagicMock
+import numpy as np
+from unittest.mock import patch
 from isogenyguard.core import recover_private_key_from_signatures
-from isogenyguard.utils import rsz_to_uruz
+from isogenyguard.utils import rsz_to_uruz, uruz_to_rsz
 
 
-# Mock elliptic curve operations
+# --- Mock elliptic curve operations ---
 def mock_x_of_kG(k, n=79):
     """Mock x(kG) — in real code, uses secp256k1"""
-    return (k * k + 1) % n  # Simplified deterministic mapping
+    return (k * k + 1) % n  # Deterministic for testing
 
 
-def generate_signature(d, z, k, n=79):
-    """Generate valid ECDSA signature for given d, z, k"""
+def mock_sign(z, d, k, n=79, G=None):
+    """Generate valid ECDSA signature"""
     r = mock_x_of_kG(k, n)
     s = pow(k, -1, n) * (z + r * d) % n
     return r, s, z
 
 
-def test_recover_private_key_realistic():
+# --- Test ---
+def test_recover_private_key_end_to_end():
     """
-    Test end-to-end key recovery:
-    1. Generate multiple signatures with fixed d
-    2. Convert (r,s,z) → (u_r, u_z)
-    3. Build R_x table and find repeated R_x values
-    4. Extract special points (same R_x, consecutive u_r)
+    Test full attack workflow:
+    1. Given public key Q = dG
+    2. Generate signatures in a predefined (u_r, u_z) square
+    3. Convert (r,s,z) → (u_r, u_z)
+    4. Build R_x table and find repeated R_x values
     5. Recover d using Theorem 9
     """
     # Setup
@@ -36,14 +38,20 @@ def test_recover_private_key_realistic():
     d_true = 27
     Q = f"mock_pubkey_{d_true}"  # Q = dG
 
-    # Step 1: Collect real signatures from "network"
-    signatures = []
-    z_values = [10, 20, 30, 40, 50]
-    k_values = [68, 5, 13, 21, 34, 42]  # Include special points
+    # Define search region: square in (u_r, u_z) space
+    ur_range = range(5, 15)  # u_r ∈ [5, 14]
+    uz_range = range(20, 30)  # u_z ∈ [20, 29]
 
-    for z in z_values:
-        for k in k_values:
-            r, s, _ = generate_signature(d_true, z, k, n)
+    # Step 1: Generate signatures from (u_r, u_z) space
+    signatures = []
+    for ur in ur_range:
+        for uz in uz_range:
+            # k = u_z + u_r * d mod n
+            k = (uz + ur * d_true) % n
+            # z can be arbitrary
+            z = (ur + uz) % n
+            # Sign
+            r, s, _ = mock_sign(z, d_true, k, n)
             signatures.append((r, s, z))
 
     # Step 2: Convert to (u_r, u_z) — Theorem 1
