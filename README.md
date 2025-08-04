@@ -112,7 +112,7 @@ Key documentation sections:
 - [User Guide](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/User%20Guide.md)
 - [API Reference](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/API%20Reference.md)
 - [Security Principles](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/Security%20Principles.md)
-- [Research Background](https://isogenyguard.readthedocs.io/en/latest/research.html)
+- [Research Background](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/Research%20Background.md)
 - [Mathematical Model](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Mathematical%20Model%20of%20IsogenyGuard.md)
 - [ECDSA audit](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/Demonstration/ecdsa-audit)
 
