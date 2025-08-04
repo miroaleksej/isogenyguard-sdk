@@ -114,6 +114,7 @@ Key documentation sections:
 - [Security Principles](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Docs/Security%20Principles.md)
 - [Research Background](https://isogenyguard.readthedocs.io/en/latest/research.html)
 - [Mathematical Model](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Mathematical%20Model%20of%20IsogenyGuard.md)
+- [ECDSA audit](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/Demonstration/ecdsa-audit)
 
 ___
 
