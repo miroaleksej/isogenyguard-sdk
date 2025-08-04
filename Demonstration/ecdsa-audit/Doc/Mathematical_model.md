@@ -33,7 +33,7 @@ Therefore, $R_x(u_r, u_z) = x(kG)$, where $k = u_r d + u_z \mod n$. $\square$
 
 ### 1.3. Topological Structure
 
-**Definition 1.3 (Discrete Torus):** The domain $\mathbb{Z}_n \times \mathbb{Z}_n$ with periodic boundary conditions (where $(n, u_z) \sim (0, u_z)$ and $(u_r, n) \sim (u_r, 0)$) forms a discrete torus $\mathbb{T}^2_n$.
+**Definition 1.3 (Discrete Torus):** The domain $\mathbb{Z}_n \times \mathbb{Z}_n$ with periodic boundary conditions (where $(n, u_z) \sim (0, u_z)$ and $(u_r, n) \sim (u_r, 0)$ ) forms a discrete torus $\mathbb{T}^2_n$.
 
 **Theorem 1.2 (Topological Equivalence):** The graph of the function $R_x: \mathbb{T}^2_n \rightarrow \mathbb{F}_p$ is homeomorphic to a 2-dimensional torus $\mathbb{T}^2$.
 
