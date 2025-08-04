@@ -1,0 +1,40 @@
+# Configuration for Bitcoin ECDSA Audit (secp256k1 curve)
+
+# Core parameters
+curve: "secp256k1"
+default_num_regions: 15    # More regions for higher confidence
+default_region_size: 60    # Slightly larger regions for Bitcoin
+
+# Safety thresholds (stricter for production systems)
+betti_thresholds:
+  beta_0: 1.0
+  beta_1: 2.0
+  beta_2: 1.0
+gamma_threshold: 0.12      # Slightly higher threshold for Bitcoin
+symmetry_threshold: 0.88   # Slightly higher threshold
+spiral_threshold: 0.75     # Slightly higher threshold
+
+# Parallel processing
+max_workers: null          # Use all available cores
+chunk_size: 2
+
+# Logging
+log_level: "INFO"
+log_file: "bitcoin_audit.log"
+
+# Performance
+cache_enabled: true
+cache_size: 2000           # Larger cache for more regions
+timeout: 600               # Longer timeout for Bitcoin analysis
+
+# Visualization
+visualization:
+  output_dir: "bitcoin_visualizations"
+  dpi: 300
+  color_scheme: "bitcoin_gold"
+
+# Report generation
+report:
+  template_dir: "templates/bitcoin"
+  output_dir: "bitcoin_reports"
+  default_format: "pdf"    # Prefer PDF for professional reports
