@@ -1,4 +1,5 @@
-# Subject: Submission of Manuscript "Topological Structure of Digital Signatures: From ECDSA to Isogeny-Based Cryptosystems"
+# Subject: 
+## Submission of Manuscript "Topological Structure of Digital Signatures: From ECDSA to Isogeny-Based Cryptosystems"
 
 Dear Editors of Journal of Cryptology,
 
