@@ -127,7 +127,7 @@ def generate_signature(M, SK):
 #### 4.3.2 Noise Application Function
 
 The noise application function is defined as:
-$$\text{apply\_noise}(\sigma$$, $$N) = \sigma \oplus\text{PRF}_N(\text{position})$$
+$$\text{apply\_noise}(\sigm, N) = \sigma \oplus\text{PRF}_N(\text{position})$$
 
 Where PRF is a pseudorandom function keyed by the noise vector $N$. This ensures:
 
