@@ -146,6 +146,8 @@ We demonstrate that the solution space of ECDSA forms a **discrete approximation
 This structure enables **topological auditing** of cryptographic implementations and **key recovery without solving the discrete logarithm problem**.
 
 ### 3. **Gradient-Based Private Key Recovery (Theorem 5)**
+![image](https://github.com/user-attachments/assets/08b54cb8-dbc0-4e9a-a364-b70b7228accb)
+
 We derive a **novel analytical formula** for private key recovery:
 $$d = -\frac{\partial r / \partial u_z}{\partial r / \partial u_r} \mod n,$$
 based on finite differences in the $(u_r, u_z)$ space. This **gradient method** allows detection and exploitation of weak nonces in real-time, with **98.7% accuracy** in experimental validation.
