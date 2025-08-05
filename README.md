@@ -6,6 +6,11 @@
 [![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=https://github.com/yourrepo&label=Visitors&countColor=%23263759)
 
+## A Note on the Scope of This Work
+
+What is presented here in the public domain represents merely the tip of the iceberg of my comprehensive scientific research. The open-source implementation and documentation you see are but a carefully curated subset of a much deeper and broader theoretical framework developed through extensive research.
+
+This public-facing component serves as an entry point to a sophisticated mathematical model that integrates algebraic topology, elliptic curve cryptography, and dynamical systems theory in ways that extend far beyond the implemented functionality. The complete body of work contains additional theoretical breakthroughs, rigorous proofs, and advanced applications that remain under development and evaluation through formal academic channels.
 
 > **"Topology is not a hacking tool, but a microscope for vulnerability diagnostics. Ignoring it means building cryptography on sand."**
 
