@@ -166,7 +166,7 @@ Therefore, $R_x(u_r, u_z) = R_x(u_r, u_z')$. $\square$
 
 **Definition 4.1 (Betti Anomaly Score):** For a set of $m$ subregions with Betti numbers $\{\beta_k^{(i)}\}_{i=1}^m$, the Betti anomaly score is:
 $$\Delta\beta = \sqrt{w_0(\bar{\beta}_0 - 1)^2 + w_1(\bar{\beta}_1 - 2)^2 + w_2(\bar{\beta}_2 - 1)^2}$$
-where $\bar{\beta}_k = \frac{1}{m}\sum_{i=1}^m \beta_k^{(i)}$ and $w_k$ are weights with $w_0 + w_1 + w_2 = 1$.
+where $\bar{\beta}_k = \frac{1{m}\sum_{i=1}^m \beta_k^{(i)}$ and $w_k$ are weights with $w_0 + w_1 + w_2 = 1$.
 
 **Definition 4.2 (Security Score):** The overall security score $S \in [0,1]$ is defined as:
 $$S = w_b \cdot \frac{1}{1 + \Delta\beta} + w_\gamma \cdot \min(1, \frac{\bar{\gamma}}{\gamma_{\text{threshold}}}) + w_\sigma \cdot \min(1, \frac{\bar{\sigma}}{\sigma_{\text{threshold}}})$$
