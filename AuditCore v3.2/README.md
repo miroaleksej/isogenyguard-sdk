@@ -33,6 +33,7 @@ This is a complete industrial implementation of the mathematical model described
 - **DynamicComputeRouter**: Manages computational resources for intensive topological calculations
 
 ### 4. Key Recovery Mechanisms
+![image](https://github.com/user-attachments/assets/b0edeb58-1a41-4eb6-83ee-0d67ce4a7565)
 - Implements bijective parameterization (R = u_r · Q + u_z · G)
 - Recovers potential private keys through linear dependencies
 - Analyzes special points in signature space for vulnerability exploitation
