@@ -175,7 +175,7 @@ Please read our [CONTRIBUTING.md](https://github.com/miroaleksej/isogenyguard-sd
 
 ## License
 
-This project is licensed under a custom ethical license that permits research and educational use while prohibiting malicious application. See [LICENSE](LICENSE) for full details.
+This project is licensed under a custom ethical license that permits research and educational use while prohibiting malicious application. See [LICENSE](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/AuditCore%20v3.2/License%20v1.0.md) for full details.
 
 ---
 
