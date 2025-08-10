@@ -1,6 +1,7 @@
 # AuditCore v3.2: ECDSA Topological Security Analysis Framework
 
-![AuditCore Architecture](https://i.imgur.com/placeholder.png)
+![image](https://github.com/user-attachments/assets/a91a9030-b77e-4070-abf0-cc7c0507bb54)
+
 
 ## Overview
 
