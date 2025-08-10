@@ -60,7 +60,7 @@ AuditCore v3.2 is released under a strict ethical license that promotes responsi
 ---
 
 **Ready to transform your ECDSA security analysis?**  
-Submit your application today at [contact@auditcore.org](mailto:contact@auditcore.org)  
-GitHub: [github.com/auditcore/v3.2](https://github.com/auditcore/v3.2)  
+Submit your application today at [miro-aleksej@yandex.ru](mailto:miro-aleksej@yandex.ru)  
+GitHub: [github.com/auditcore/v3.2](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/AuditCore%20v3.2)  
 
 *AuditCore v3.2: Where advanced topology meets cryptographic security—ensuring trust in the digital world.*
