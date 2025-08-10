@@ -171,7 +171,7 @@ Contributions to AuditCore v3.2 are welcome, particularly in:
 - Integration with additional cryptographic libraries
 - Development of educational materials
 
-Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+Please read our [CONTRIBUTING.md](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/AuditCore%20v3.2/CONTRIBUTING.md#development-setup) for details on our code of conduct and the process for submitting pull requests.
 
 ## License
 
