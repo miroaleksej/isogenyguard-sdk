@@ -126,7 +126,7 @@ ___
 ## 🛸 The future
 
 <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/1126ce59-2385-4f7c-b3db-5abb1d029afb" />
-
+-[AuditCore v3.2](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/AuditCore%20v3.2)
 - [Demonstration](https://github.com/miroaleksej/isogenyguard-sdk/tree/main/Demonstration)
 ___
 
