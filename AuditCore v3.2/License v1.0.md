@@ -79,6 +79,6 @@ By using, modifying, or distributing the Software, you indicate your acceptance 
 
 ---
 
-Copyright (c) 2023 AuditCore Research Team
+Copyright (c) 2025 AuditCore Research Team
 
 This work is licensed under the AuditCore Ethical License v1.0. For the full license text, see LICENSE file in the repository.
