@@ -1,4 +1,5 @@
 # AuditCore v3.2: Now Available for Research and Security Implementation
+![image](https://github.com/user-attachments/assets/4b3581b4-b84a-41c9-94d5-597c14a1c802)
 
 ## Cutting-Edge ECDSA Security Analysis Framework Ready for Deployment
 
