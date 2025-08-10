@@ -55,7 +55,6 @@ The creators of this tool do not endorse or support any unauthorized security te
 
 This tool implements theoretical approaches to ECDSA analysis that are still being researched by the cryptographic community. The effectiveness of topological methods for detecting all types of ECDSA vulnerabilities has not been universally validated. Users should not assume that absence of detected vulnerabilities means a system is secure.
 
-The mathematical models used in this tool are based on specific assumptions about ECDSA implementations that may not hold in all real-world scenarios.
 
 ## License
 
