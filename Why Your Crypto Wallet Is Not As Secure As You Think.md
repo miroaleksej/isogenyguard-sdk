@@ -1,5 +1,8 @@
 # Why Your Crypto Wallet Is Not As Secure As You Think
 
+![image](https://github.com/user-attachments/assets/e8a86103-4cec-44ca-9be9-0b9d2c1aefe8)
+
+
 ## Simple Words About a Serious Threat
 
 Have you ever wondered how secure your cryptocurrencies really are? Most people believe that their wallets are securely protected by mathematics. Unfortunately, this is no longer true. Even if you think you're using the "most secure" system, your private key can be recovered using only the public key. And this is not theory—it's a real threat that I'll explain to you in simple terms.
