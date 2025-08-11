@@ -6,6 +6,8 @@
 [![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue)](https://python.org)
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=https://github.com/yourrepo&label=Visitors&countColor=%23263759)
 
+[Why Your Crypto Wallet Is Not As Secure As You Think](https://github.com/miroaleksej/isogenyguard-sdk/blob/main/Why%20Your%20Crypto%20Wallet%20Is%20Not%20As%20Secure%20As%20You%20Think.md)
+
 ## A Note on the Scope of This Work
 
 What is presented here in the public domain represents merely the tip of the iceberg of my comprehensive scientific research. The open-source implementation and documentation you see are but a carefully curated subset of a much deeper and broader theoretical framework developed through extensive research.
