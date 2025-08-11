@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuditCore v3.2 - Topological ECDSA Security Analysis</title>
+    <style>
+        /* Apple Dark Mode inspired styles */
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1E1E1E;
+            --bg-tertiary: #252525;
+            --bg-vibrancy: rgba(28, 28, 28, 0.75);
+            --text-primary: #ECECEC;
+            --text-secondary: #A3A3A3;
+            --text-tertiary: #787878;
+            --accent-blue: #0A84FF;
+            --accent-green: #30D158;
+            --accent-red: #FF453A;
+            --accent-yellow: #FFD60A;
+            --border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(40, 40, 40, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Vibrancy effect (matte glass) */
+        .vibrancy {
+            background: var(--bg-vibrancy);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+        }
+
+        /* Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            color: var(--accent-blue);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 24px;
+            margin-left: 32px;
+        }
+
+        .nav-item {
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-item.active {
+            color: var(--text-primary);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--accent-blue);
+            border-radius: 1px;
+        }
+
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px 8px 32px;
+            color: var(--text-primary);
+            width: 240px;
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-top: 56px;
+            padding: 24px;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .metric-title {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .metric-secure {
+            color: var(--accent-green);
+        }
+
+        .metric-warning {
+            color: var(--accent-yellow);
+        }
+
+        .metric-critical {
+            color: var(--accent-red);
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .trend-up {
+            color: var(--accent-red);
+        }
+
+        .trend-down {
+            color: var(--accent-green);
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: 400px;
+            margin-bottom: 24px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chart-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chart-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        .chart-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .torus-visualization {
+            width: 100%;
+            height: 320px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .torus-canvas {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #121212 100%);
+        }
+
+        .torus-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .control-slider {
+            flex: 1;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2);
+        }
+
+        .recent-analyses {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .view-all {
+            color: var(--accent-blue);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .analysis-list {
+            list-style: none;
+        }
+
+        .analysis-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .analysis-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .analysis-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .analysis-icon.secure {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--accent-green);
+        }
+
+        .analysis-icon.warning {
+            background: rgba(255, 214, 10, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        .analysis-icon.critical {
+            background: rgba(255, 69, 58, 0.15);
+            color: var(--accent-red);
+        }
+
+        .analysis-details {
+            flex: 1;
+        }
+
+        .analysis-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .analysis-description {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .analysis-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.secure {
+            background: var(--accent-green);
+        }
+
+        .status-dot.warning {
+            background: var(--accent-yellow);
+        }
+
+        .status-dot.critical {
+            background: var(--accent-red);
+        }
+
+        /* Analysis Panel */
+        .analysis-panel {
+            display: none;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 360px;
+            gap: 24px;
+        }
+
+        .analysis-methods {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .method-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .method-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .method-item.active {
+            background: rgba(10, 132, 255, 0.1);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .method-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .method-description {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .method-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .method-status.completed {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--accent-green);
+        }
+
+        .method-status.running {
+            background: rgba(255, 214, 10, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        .visualization-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: 680px;
+        }
+
+        .visualization-tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .visualization-tab {
+            padding: 8px 0;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .visualization-tab.active {
+            color: var(--text-primary);
+        }
+
+        .visualization-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--accent-blue);
+            border-radius: 1px;
+        }
+
+        .visualization-content {
+            height: 560px;
+        }
+
+        .torus-3d {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .anomaly-hotspots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .hotspot {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            70% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.6; }
+        }
+
+        .visualization-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group-title {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .resolution-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .resolution-value {
+            min-width: 50px;
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .detailed-results {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: 680px;
+            overflow-y: auto;
+        }
+
+        .result-section {
+            margin-bottom: 24px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-card {
+            background: rgba(40, 40, 40, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .result-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            color: var(--text-tertiary);
+        }
+
+        .metric-value {
+            font-weight: 500;
+        }
+
+        .betti-numbers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .betti-item {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .betti-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+        }
+
+        .betti-value {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .betti-ok {
+            color: var(--accent-green);
+        }
+
+        .betti-warning {
+            color: var(--accent-yellow);
+        }
+
+        .betti-critical {
+            color: var(--accent-red);
+        }
+
+        .vulnerability-indicators {
+            list-style: none;
+        }
+
+        .vulnerability-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: rgba(255, 69, 58, 0.08);
+            border-left: 3px solid var(--accent-red);
+        }
+
+        .vulnerability-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .vulnerability-description {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* Topology Visualization */
+        .topology-visualization {
+            display: none;
+        }
+
+        .topology-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 24px;
+        }
+
+        .topology-3d-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: 720px;
+        }
+
+        .topology-3d {
+            width: 100%;
+            height: 600px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topology-controls {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .topology-region {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: 720px;
+        }
+
+        .region-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .region-detail {
+            padding: 16px;
+            background: rgba(40, 40, 40, 0.4);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .region-label {
+            color: var(--text-tertiary);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .region-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .region-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .metric-bar {
+            height: 6px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .metric-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .metric-fill.normal {
+            background: var(--accent-green);
+            width: 95%;
+        }
+
+        .metric-fill.warning {
+            background: var(--accent-yellow);
+            width: 75%;
+        }
+
+        .metric-fill.critical {
+            background: var(--accent-red);
+            width: 45%;
+        }
+
+        /* Reports Panel */
+        .reports-panel {
+            display: none;
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+        }
+
+        .reports-list {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            height: 720px;
+        }
+
+        .report-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .report-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .report-item.active {
+            background: rgba(10, 132, 255, 0.1);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .report-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .report-status.secure {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--accent-green);
+        }
+
+        .report-status.warning {
+            background: rgba(255, 214, 10, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        .report-status.critical {
+            background: rgba(255, 69, 58, 0.15);
+            color: var(--accent-red);
+        }
+
+        .report-description {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .report-metrics {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .report-preview {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            height: 720px;
+            overflow-y: auto;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .report-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .report-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        .report-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-points {
+            list-style: none;
+        }
+
+        .summary-point {
+            padding: 12px;
+            background: rgba(40, 40, 40, 0.4);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .point-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .point-icon.secure {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--accent-green);
+        }
+
+        .point-icon.warning {
+            background: rgba(255, 214, 10, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        .point-icon.critical {
+            background: rgba(255, 69, 58, 0.15);
+            color: var(--accent-red);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            display: none;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+        }
+
+        .settings-menu {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .settings-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .settings-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .settings-item.active {
+            background: rgba(10, 132, 255, 0.1);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .settings-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .settings-description {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .settings-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .settings-section {
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .setting-group {
+            margin-bottom: 24px;
+        }
+
+        .group-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-label {
+            font-weight: 500;
+        }
+
+        .setting-description {
+            color: var(--text-tertiary);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .setting-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-blue);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .resource-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .resource-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .resource-meter {
+            height: 6px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .resource-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .resource-fill.low {
+            background: var(--accent-green);
+        }
+
+        .resource-fill.medium {
+            background: var(--accent-yellow);
+        }
+
+        .resource-fill.high {
+            background: var(--accent-red);
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .slider-value {
+            min-width: 50px;
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        .btn-primary:hover {
+            background: #0077e6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(10, 132, 255, 0.25);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Integration Panel */
+        .integration-panel {
+            display: none;
+        }
+
+        .integration-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .integration-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .integration-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .integration-subtitle {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .integration-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .integration-card {
+            background: rgba(40, 40, 40, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .integration-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .integration-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: rgba(10, 132, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            font-size: 24px;
+        }
+
+        .integration-card-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .integration-card-description {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .api-integration {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .api-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(48, 209, 88, 0.1);
+            color: var(--accent-green);
+        }
+
+        .api-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            color: var(--text-primary);
+        }
+
+        .code-comment {
+            color: var(--text-tertiary);
+        }
+
+        .code-keyword {
+            color: var(--accent-blue);
+        }
+
+        .code-string {
+            color: var(--accent-green);
+        }
+
+        .code-function {
+            color: var(--accent-yellow);
+        }
+
+        .integration-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .analysis-grid,
+            .topology-grid,
+            .reports-grid,
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0 16px;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav vibrancy">
+        <div class="nav-content">
+            <div class="logo">
+                <span class="logo-icon">A</span>
+                <span>AuditCore v3.2</span>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item active" data-panel="dashboard">Dashboard</div>
+                <div class="nav-item" data-panel="analysis">Analysis</div>
+                <div class="nav-item" data-panel="topology">Topology</div>
+                <div class="nav-item" data-panel="reports">Reports</div>
+                <div class="nav-item" data-panel="settings">Settings</div>
+                <div class="nav-item" data-panel="integration">Integration</div>
+            </div>
+            
+            <div class="nav-right">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search analyses...">
+                </div>
+                <div class="user-avatar">U</div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Panel (default) -->
+        <section id="dashboard" class="panel active">
+            <h1 class="page-title">Security Overview</h1>
+            <p class="page-subtitle">Real-time monitoring of ECDSA implementations using topological analysis</p>
+            
+            <!-- Metrics Grid -->
+            <div class="dashboard-grid">
+                <div class="metric-card fade-in delay-1">
+                    <div class="metric-title">SYSTEM SECURITY</div>
+                    <div class="metric-value metric-secure">98.7%</div>
+                    <div class="metric-trend trend-down">
+                        <span>↓ 1.2%</span> from last analysis
+                    </div>
+                </div>
+                
+                <div class="metric-card fade-in delay-2">
+                    <div class="metric-title">BETTI SCORE</div>
+                    <div class="metric-value">0.95/1.0</div>
+                    <div class="metric-trend">
+                        Matches expected torus structure
+                    </div>
+                </div>
+                
+                <div class="metric-card fade-in delay-3">
+                    <div class="metric-title">COLLISION DENSITY</div>
+                    <div class="metric-value">0.012%</div>
+                    <div class="metric-trend">
+                        Well below threshold (0.1%)
+                    </div>
+                </div>
+                
+                <div class="metric-card fade-in delay-4">
+                    <div class="metric-title">VULNERABILITY PROBABILITY</div>
+                    <div class="metric-value">0.03%</div>
+                    <div class="metric-trend trend-down">
+                        <span>↓ 0.02%</span> from last analysis
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Torus Visualization -->
+            <div class="chart-container fade-in delay-1">
+                <div class="chart-header">
+                    <h2 class="chart-title">Topological Structure Analysis</h2>
+                    <div class="chart-actions">
+                        <button class="chart-btn active">3D Torus</button>
+                        <button class="chart-btn">2D Projection</button>
+                        <button class="chart-btn">Persistence Diagram</button>
+                        <button class="chart-btn">Mapper Graph</button>
+                    </div>
+                </div>
+                
+                <div class="torus-visualization">
+                    <div class="torus-canvas" id="torus-canvas">
+                        <!-- Torus visualization would be rendered here by JavaScript -->
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary);">
+                            Interactive 3D Torus Visualization
+                        </div>
+                        <div class="anomaly-hotspots">
+                            <div class="hotspot" style="width: 40px; height: 40px; left: 35%; top: 45%; background: rgba(255, 69, 58, 0.3);"></div>
+                            <div class="hotspot" style="width: 30px; height: 30px; left: 65%; top: 35%; background: rgba(255, 214, 10, 0.3);"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="torus-controls">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Resolution</span>
+                            <span>High</span>
+                        </div>
+                        <input type="range" class="slider" min="0" max="100" value="75">
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Depth</span>
+                            <span>Medium</span>
+                        </div>
+                        <input type="range" class="slider" min="0" max="100" value="50">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Analyses -->
+            <div class="recent-analyses fade-in delay-2">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Analyses</h2>
+                    <div class="view-all">View all</div>
+                </div>
+                
+                <ul class="analysis-list">
+                    <li class="analysis-item">
+                        <div class="analysis-icon secure">B</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">Bitcoin Core ECDSA Implementation</div>
+                            <div class="analysis-description">Comprehensive topological analysis of Bitcoin Core's ECDSA implementation</div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot secure"></span>
+                            <span>Secure (98.7%)</span>
+                        </div>
+                    </li>
+                    
+                    <li class="analysis-item">
+                        <div class="analysis-icon warning">W</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">WalletX Security Audit</div>
+                            <div class="analysis-description">Analysis revealed potential nonce reuse issues</div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot warning"></span>
+                            <span>Warning (85.2%)</span>
+                        </div>
+                    </li>
+                    
+                    <li class="analysis-item">
+                        <div class="analysis-icon critical">E</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">ExchangeY Implementation</div>
+                            <div class="analysis-description">Critical vulnerability detected in ECDSA implementation</div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot critical"></span>
+                            <span>Critical (62.1%)</span>
+                        </div>
+                    </li>
+                    
+                    <li class="analysis-item">
+                        <div class="analysis-icon secure">L</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">LibraryZ Randomness Check</div>
+                            <div class="analysis-description">Verification of random number generator implementation</div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot secure"></span>
+                            <span>Secure (99.2%)</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Analysis Panel -->
+        <section id="analysis" class="panel">
+            <h1 class="page-title">Security Analysis</h1>
+            <p class="page-subtitle">Analyze ECDSA implementations for topological vulnerabilities</p>
+            
+            <div class="analysis-grid">
+                <!-- Analysis Methods -->
+                <div class="analysis-methods">
+                    <div class="section-header">
+                        <h2 class="section-title">Analysis Methods</h2>
+                    </div>
+                    
+                    <div class="method-item active">
+                        <div class="method-title">TorusScan</div>
+                        <div class="method-description">Quantum-inspired topological vulnerability scanner</div>
+                        <div class="method-status completed">Completed</div>
+                    </div>
+                    
+                    <div class="method-item">
+                        <div class="method-title">TCON Analysis</div>
+                        <div class="method-description">Topological conformance verification</div>
+                    </div>
+                    
+                    <div class="method-item">
+                        <div class="method-title">Betti Analysis</div>
+                        <div class="method-description">Betti numbers verification for torus structure</div>
+                    </div>
+                    
+                    <div class="method-item">
+                        <div class="method-title">Gradient Scan</div>
+                        <div class="method-description">Gradient-based anomaly detection</div>
+                    </div>
+                    
+                    <div class="method-item">
+                        <div class="method-title">Collision Engine</div>
+                        <div class="method-description">Collision pattern detection and analysis</div>
+                    </div>
+                    
+                    <div class="method-item">
+                        <div class="method-title">Weak Key Scan</div>
+                        <div class="method-description">Detection of weak keys through symmetry analysis</div>
+                    </div>
+                    
+                    <div class="method-item">
+                        <div class="method-title">Predictive Model</div>
+                        <div class="method-description">Vulnerability prediction based on historical data</div>
+                    </div>
+                </div>
+                
+                <!-- Visualization Panel -->
+                <div class="visualization-panel">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Topological Visualization</h2>
+                        <div class="chart-actions">
+                            <button class="chart-btn active">3D Torus</button>
+                            <button class="chart-btn">2D Projection</button>
+                            <button class="chart-btn">Persistence Diagram</button>
+                            <button class="chart-btn">Mapper Graph</button>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization-content">
+                        <div class="torus-3d" id="analysis-torus">
+                            <!-- Visualization would be rendered here -->
+                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary);">
+                                Interactive Topological Visualization
+                            </div>
+                            <div class="anomaly-hotspots">
+                                <div class="hotspot" style="width: 45px; height: 45px; left: 40%; top: 50%; background: rgba(255, 69, 58, 0.4);"></div>
+                                <div class="hotspot" style="width: 35px; height: 35px; left: 70%; top: 30%; background: rgba(255, 214, 10, 0.4);"></div>
+                                <div class="hotspot" style="width: 25px; height: 25px; left: 25%; top: 25%; background: rgba(48, 209, 88, 0.4);"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization-controls">
+                        <div class="control-group">
+                            <div class="control-group-title">Visualization Controls</div>
+                            
+                            <div class="resolution-control">
+                                <span class="control-group-title">Resolution</span>
+                                <div class="resolution-value">High</div>
+                            </div>
+                            <input type="range" class="slider" min="0" max="100" value="85">
+                            
+                            <div class="resolution-control">
+                                <span class="control-group-title">Depth</span>
+                                <div class="resolution-value">Medium</div>
+                            </div>
+                            <input type="range" class="slider" min="0" max="100" value="50">
+                        </div>
+                        
+                        <div class="control-group">
+                            <button class="btn btn-primary" style="width: 100%;">Focus on Anomalies</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detailed Results -->
+                <div class="detailed-results">
+                    <div class="result-section">
+                        <h2 class="result-title">Security Assessment</h2>
+                        
+                        <div class="result-card">
+                            <div class="result-metric">
+                                <span class="metric-label">Security Score</span>
+                                <span class="metric-value metric-secure">98.7%</span>
+                            </div>
+                            <div class="result-metric">
+                                <span class="metric-label">Betti Score</span>
+                                <span class="metric-value">0.95/1.0</span>
+                            </div>
+                            <div class="result-metric">
+                                <span class="metric-label">Collision Density</span>
+                                <span class="metric-value">0.012% (Normal)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h2 class="result-title">Betti Numbers Analysis</h2>
+                        
+                        <div class="betti-numbers">
+                            <div class="betti-item">
+                                <div class="betti-label">β₀</div>
+                                <div class="betti-value betti-ok">1.0</div>
+                                <div class="metric-label" style="color: var(--accent-green);">OK</div>
+                            </div>
+                            <div class="betti-item">
+                                <div class="betti-label">β₁</div>
+                                <div class="betti-value betti-ok">2.0</div>
+                                <div class="metric-label" style="color: var(--accent-green);">OK</div>
+                            </div>
+                            <div class="betti-item">
+                                <div class="betti-label">β₂</div>
+                                <div class="betti-value betti-ok">1.0</div>
+                                <div class="metric-label" style="color: var(--accent-green);">OK</div>
+                            </div>
+                        </div>
+                        
+                        <div class="result-card">
+                            <div class="result-metric">
+                                <span class="metric-label">Expected Structure</span>
+                                <span class="metric-value">Torus (β₀=1, β₁=2, β₂=1)</span>
+                            </div>
+                            <div class="result-metric">
+                                <span class="metric-label">Stability</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill normal" style="width: 95%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h2 class="result-title">Vulnerability Indicators</h2>
+                        
+                        <ul class="vulnerability-indicators">
+                            <li class="vulnerability-item">
+                                <div class="vulnerability-title">No Linear Patterns Detected</div>
+                                <div class="vulnerability-description">No evidence of linear dependencies that could indicate potential key recovery vulnerabilities</div>
+                            </li>
+                            <li class="vulnerability-item">
+                                <div class="vulnerability-title">Diagonal Symmetry Preserved</div>
+                                <div class="vulnerability-description">Violation rate: 0.003% (well below threshold of 1%)</div>
+                            </li>
+                            <li class="vulnerability-item">
+                                <div class="vulnerability-title">No Critical Anomalies Detected</div>
+                                <div class="vulnerability-description">All detected anomalies fall within normal statistical variation</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result-section">
+                        <h2 class="result-title">Recommendations</h2>
+                        
+                        <ul class="vulnerability-indicators">
+                            <li class="vulnerability-item" style="border-left-color: var(--accent-green); background: rgba(48, 209, 88, 0.08);">
+                                <div class="vulnerability-title">Continue Regular Monitoring</div>
+                                <div class="vulnerability-description">Maintain current security posture with periodic topological analysis</div>
+                            </li>
+                            <li class="vulnerability-item" style="border-left-color: var(--accent-green); background: rgba(48, 209, 88, 0.08);">
+                                <div class="vulnerability-title">Consider Additional Randomness Checks</div>
+                                <div class="vulnerability-description">Enhance entropy sources for nonce generation</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Topology Visualization Panel -->
+        <section id="topology" class="panel">
+            <h1 class="page-title">Topology Visualization</h1>
+            <p class="page-subtitle">Interactive exploration of ECDSA signature space topology</p>
+            
+            <div class="topology-grid">
+                <div class="topology-3d-container">
+                    <div class="chart-header">
+                        <h2 class="chart-title">3D Torus Visualization</h2>
+                        <div class="chart-actions">
+                            <button class="chart-btn active">3D View</button>
+                            <button class="chart-btn">2D Projection</button>
+                            <button class="chart-btn">Persistence Diagram</button>
+                            <button class="chart-btn">Mapper Graph</button>
+                        </div>
+                    </div>
+                    
+                    <div class="topology-3d" id="topology-3d">
+                        <!-- Topology visualization would be rendered here -->
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary);">
+                            Interactive 3D Topology Visualization
+                        </div>
+                        <div class="anomaly-hotspots">
+                            <div class="hotspot" style="width: 50px; height: 50px; left: 45%; top: 55%; background: rgba(255, 69, 58, 0.5);"></div>
+                            <div class="hotspot" style="width: 40px; height: 40px; left: 75%; top: 35%; background: rgba(255, 214, 10, 0.5);"></div>
+                            <div class="hotspot" style="width: 30px; height: 30px; left: 20%; top: 25%; background: rgba(48, 209, 88, 0.5);"></div>
+                            <div class="hotspot" style="width: 25px; height: 25px; left: 60%; top: 70%; background: rgba(255, 214, 10, 0.5);"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="topology-controls">
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Region Focus</span>
+                                <span>All Regions</span>
+                            </div>
+                            <input type="range" class="slider" min="0" max="100" value="50">
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Anomaly Intensity</span>
+                                <span>Medium</span>
+                            </div>
+                            <input type="range" class="slider" min="0" max="100" value="50">
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Visualization Depth</span>
+                                <span>High</span>
+                            </div>
+                            <input type="range" class="slider" min="0" max="100" value="75">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="topology-region">
+                    <h2 class="region-title">Region Details</h2>
+                    
+                    <div class="region-detail">
+                        <div class="region-label">Selected Region</div>
+                        <div class="region-value">#A7B2</div>
+                    </div>
+                    
+                    <div class="region-detail">
+                        <div class="region-label">Betti Numbers</div>
+                        <div class="region-value">β₀=1, β₁=2.1, β₂=1</div>
+                    </div>
+                    
+                    <div class="region-detail">
+                        <div class="region-label">Anomaly Score</div>
+                        <div class="region-value">0.05 (Normal)</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill normal"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="region-detail">
+                        <div class="region-label">Stability</div>
+                        <div class="region-value">0.98 (High)</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill normal" style="width: 98%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="region-detail">
+                        <div class="region-label">Density</div>
+                        <div class="region-value">0.01%</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill normal" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="region-detail">
+                        <div class="region-label">Diagonal Symmetry</div>
+                        <div class="region-value">Preserved (0.003% violation)</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill normal" style="width: 99%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="region-detail">
+                        <div class="region-label">Spiral Pattern</div>
+                        <div class="region-value">Normal structure</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill normal" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-secondary">Export Data</button>
+                        <button class="btn btn-primary">Focus on Region</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Reports Panel -->
+        <section id="reports" class="panel">
+            <h1 class="page-title">Security Reports</h1>
+            <p class="page-subtitle">View and manage security analysis reports</p>
+            
+            <div class="reports-grid">
+                <div class="reports-list">
+                    <div class="section-header">
+                        <h2 class="section-title">Analysis Reports</h2>
+                        <div class="view-all">New Analysis</div>
+                    </div>
+                    
+                    <div class="analysis-item active">
+                        <div class="analysis-icon secure">B</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">Bitcoin Core ECDSA Security Report</div>
+                            <div class="analysis-description">Comprehensive topological analysis of Bitcoin Core's ECDSA implementation</div>
+                            <div class="analysis-metrics">
+                                <span>Security Score: 98.7%</span>
+                                <span>• Betti Score: 0.95</span>
+                                <span>• Collision Density: 0.012%</span>
+                            </div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot secure"></span>
+                            <span>Secure</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-icon warning">W</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">WalletX Security Audit Report</div>
+                            <div class="analysis-description">Analysis revealed potential nonce reuse issues</div>
+                            <div class="analysis-metrics">
+                                <span>Security Score: 85.2%</span>
+                                <span>• Betti Score: 0.72</span>
+                                <span>• Collision Density: 0.25%</span>
+                            </div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot warning"></span>
+                            <span>Vulnerable</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-icon critical">E</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">ExchangeY Implementation Report</div>
+                            <div class="analysis-description">Critical vulnerability detected in ECDSA implementation</div>
+                            <div class="analysis-metrics">
+                                <span>Security Score: 62.1%</span>
+                                <span>• Betti Score: 0.45</span>
+                                <span>• Collision Density: 1.8%</span>
+                            </div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot critical"></span>
+                            <span>Critical</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-icon secure">L</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">LibraryZ Randomness Check</div>
+                            <div class="analysis-description">Verification of random number generator implementation</div>
+                            <div class="analysis-metrics">
+                                <span>Security Score: 99.2%</span>
+                                <span>• Betti Score: 0.98</span>
+                                <span>• Collision Density: 0.005%</span>
+                            </div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot secure"></span>
+                            <span>Secure</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-icon warning">M</div>
+                        <div class="analysis-details">
+                            <div class="analysis-name">MobileWallet Implementation</div>
+                            <div class="analysis-description">Analysis of mobile wallet ECDSA implementation</div>
+                            <div class="analysis-metrics">
+                                <span>Security Score: 88.5%</span>
+                                <span>• Betti Score: 0.78</span>
+                                <span>• Collision Density: 0.18%</span>
+                            </div>
+                        </div>
+                        <div class="analysis-status">
+                            <span class="status-dot warning"></span>
+                            <span>Vulnerable</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="report-preview">
+                    <div class="report-header">
+                        <h2 class="report-title">Bitcoin Core ECDSA Security Report (2023-08-11)</h2>
+                        <div class="report-actions">
+                            <button class="report-btn">Print</button>
+                            <button class="report-btn">Save PDF</button>
+                            <button class="report-btn">Share</button>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3 class="section-title">Summary</h3>
+                        
+                        <ul class="summary-points">
+                            <li class="summary-point">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>System is SECURE with 98.7% confidence</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">Based on comprehensive topological analysis</div>
+                                </div>
+                            </li>
+                            <li class="summary-point">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>Betti numbers match expected torus structure (β₀=1, β₁=2, β₂=1)</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">Indicates proper implementation of ECDSA</div>
+                                </div>
+                            </li>
+                            <li class="summary-point">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>No significant collision patterns detected</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">Collision density: 0.012% (well below threshold of 0.1%)</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3 class="section-title">Key Findings</h3>
+                        
+                        <ul class="summary-points">
+                            <li class="summary-point">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>Topological structure is stable and matches expected torus</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">No significant deviations from expected topological invariants</div>
+                                </div>
+                            </li>
+                            <li class="summary-point">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>No linear patterns indicating potential key recovery</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">All linear dependencies fall within normal statistical variation</div>
+                                </div>
+                            </li>
+                            <li class="summary-point">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>Diagonal symmetry is preserved (violation rate: 0.003%)</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">Well below critical threshold of 1%</div>
+                                </div>
+                            </li>
+                            <li class="summary-point">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>Spiral structure follows expected pattern</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">No anomalous spirals indicating nonce reuse</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3 class="section-title">Recommendations</h3>
+                        
+                        <ul class="summary-points">
+                            <li class="summary-point" style="border-left-color: var(--accent-green); background: rgba(48, 209, 88, 0.08);">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>Continue regular monitoring of ECDSA implementation</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">Recommended frequency: monthly topological analysis</div>
+                                </div>
+                            </li>
+                            <li class="summary-point" style="border-left-color: var(--accent-green); background: rgba(48, 209, 88, 0.08);">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>Consider implementing additional randomness checks</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">Enhance entropy sources for nonce generation</div>
+                                </div>
+                            </li>
+                            <li class="summary-point" style="border-left-color: var(--accent-green); background: rgba(48, 209, 88, 0.08);">
+                                <div class="point-icon secure">✓</div>
+                                <div>
+                                    <div>Maintain current cryptographic practices</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">No immediate changes required to implementation</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="report-section">
+                        <h3 class="section-title">Technical Details</h3>
+                        
+                        <div class="region-detail">
+                            <div class="region-metric">
+                                <span class="region-label">Analysis Method</span>
+                                <span class="region-value">TorusScan v3.2</span>
+                            </div>
+                        </div>
+                        
+                        <div class="region-detail">
+                            <div class="region-metric">
+                                <span class="region-label">Public Key</span>
+                                <span class="region-value">02a1b2c3d4e5f6... (truncated)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="region-detail">
+                            <div class="region-metric">
+                                <span class="region-label">Curve Used</span>
+                                <span class="region-value">secp256k1</span>
+                            </div>
+                        </div>
+                        
+                        <div class="region-detail">
+                            <div class="region-metric">
+                                <span class="region-label">Analysis Duration</span>
+                                <span class="region-value">4m 22s</span>
+                            </div>
+                        </div>
+                        
+                        <div class="region-detail">
+                            <div class="region-metric">
+                                <span class="region-label">Betti Numbers</span>
+                                <span class="region-value">β₀=1.0, β₁=2.0, β₂=1.0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="region-detail">
+                            <div class="region-metric">
+                                <span class="region-label">Topological Entropy</span>
+                                <span class="region-value">4.82 (High)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Settings Panel -->
+        <section id="settings" class="panel">
+            <h1 class="page-title">System Settings</h1>
+            <p class="page-subtitle">Configure AuditCore v3.2 for optimal performance and security</p>
+            
+            <div class="settings-grid">
+                <div class="settings-menu">
+                    <div class="settings-item active">
+                        <div class="settings-title">General</div>
+                        <div class="settings-description">Basic application settings and preferences</div>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-title">Resources</div>
+                        <div class="settings-description">Resource allocation and performance settings</div>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-title">Analysis</div>
+                        <div class="settings-description">Analysis methods and accuracy settings</div>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-title">Integration</div>
+                        <div class="settings-description">API settings and integration options</div>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-title">Security</div>
+                        <div class="settings-description">Security policies and compliance settings</div>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-title">Notifications</div>
+                        <div class="settings-description">Notification preferences and alerts</div>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-title">Advanced</div>
+                        <div class="settings-description">Advanced configuration options</div>
+                    </div>
+                </div>
+                
+                <div class="settings-content">
+                    <div class="settings-section">
+                        <h2 class="section-header">General Settings</h2>
+                        
+                        <div class="setting-group">
+                            <div class="group-title">Appearance</div>
+                            
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Dark Mode</div>
+                                    <div class="setting-description">Use dark color scheme for interface</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Auto-update</div>
+                                    <div class="setting-description">Automatically check for and install updates</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Notifications</div>
+                                    <div class="setting-description">Show desktop notifications for analysis results</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div>
+                                    <div class="setting-label">Advanced Mode</div>
+                                    <div class="setting-description">Show advanced analysis options and settings</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <div class="group-title">Language & Region</div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">Language</div>
+                                <div class="setting-control">
+                                    <select class="form-input" style="width: auto;">
+                                        <option>English</option>
+                                        <option>Spanish</option>
+                                        <option>French</option>
+                                        <option>German</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h2 class="section-header">System Information</h2>
+                        
+                        <div class="setting-group">
+                            <div class="setting-row">
+                                <div class="setting-label">Version</div>
+                                <div class="setting-value">AuditCore v3.2.1</div>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">Build</div>
+                                <div class="setting-value">2023.08.11.01</div>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">Installation ID</div>
+                                <div class="setting-value">ac-7b3d9e2a-8f1c-4a2d-b3e7-9f8c1d0e4a5b</div>
+                            </div>
+                            
+                            <div class="setting-row">
+                                <div class="setting-label">API Version</div>
+                                <div class="setting-value">v1</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-secondary">Reset to Defaults</button>
+                        <button class="btn btn-primary">Apply Changes</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Integration Panel -->
+        <section id="integration" class="panel">
+            <div class="integration-content">
+                <div class="integration-header">
+                    <h1 class="integration-title">API Integration</h1>
+                    <p class="integration-subtitle">Connect AuditCore v3.2 to your systems for automated security analysis</p>
+                </div>
+                
+                <div class="integration-options">
+                    <div class="integration-card">
+                        <div class="integration-icon">🔗</div>
+                        <h3 class="integration-card-title">CI/CD Integration</h3>
+                        <p class="integration-card-description">Integrate security analysis into your continuous integration and deployment pipelines to catch vulnerabilities early in the development process.</p>
+                    </div>
+                    
+                    <div class="integration-card">
+                        <div class="integration-icon">📊</div>
+                        <h3 class="integration-card-title">Monitoring & Alerting</h3>
+                        <p class="integration-card-description">Set up real-time monitoring of your ECDSA implementations with customizable alerts for potential security issues.</p>
+                    </div>
+                    
+                    <div class="integration-card">
+                        <div class="integration-icon">🔄</div>
+                        <h3 class="integration-card-title">Automated Analysis</h3>
+                        <p class="integration-card-description">Schedule regular security analyses of your systems and receive detailed reports without manual intervention.</p>
+                    </div>
+                    
+                    <div class="integration-card">
+                        <div class="integration-icon">🛡️</div>
+                        <h3 class="integration-card-title">Security Compliance</h3>
+                        <p class="integration-card-description">Generate compliance reports for security standards and frameworks using AuditCore's topological analysis.</p>
+                    </div>
+                </div>
+                
+                <div class="api-integration">
+                    <div class="api-header">
+                        <h2 class="api-title">API Configuration</h2>
+                        <div class="api-status">
+                            <span>•</span> Connected
+                        </div>
+                    </div>
+                    
+                    <div class="api-form">
+                        <div class="form-group">
+                            <label class="form-label">Public Key</label>
+                            <input type="text" class="form-input" value="02a1b2c3d4e5f67890abcdef1234567890abcdef1234567890abcdef1234567890ab" placeholder="Enter public key to analyze...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Analysis Type</label>
+                            <select class="form-input">
+                                <option>Full Security Analysis</option>
+                                <option>Quick Vulnerability Scan</option>
+                                <option>Topological Structure Check</option>
+                                <option>Collision Pattern Detection</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Target Size</label>
+                            <div class="form-row">
+                                <input type="text" class="form-input" value="100">
+                                <select class="form-input">
+                                    <option>GB</option>
+                                    <option>MB</option>
+                                    <option>TB</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">API Endpoint</label>
+                            <input type="text" class="form-input" value="https://api.auditcore.io/v1/ecdsa/analyze" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="code-block">
+                        <span class="code-comment"># Example API request using Python</span><br>
+                        <span class="code-keyword">import</span> requests<br>
+                        <span class="code-keyword">import</span> json<br>
+                        <br>
+                        url = <span class="code-string">"https://api.auditcore.io/v1/ecdsa/analyze"</span><br>
+                        headers = {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"Authorization"</span>: <span class="code-string">"Bearer YOUR_API_KEY"</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"Content-Type"</span>: <span class="code-string">"application/json"</span><br>
+                        }<br>
+                        payload = {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"public_key"</span>: <span class="code-string">"02a1b2c3d4e5f6...ab"</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"analysis_type"</span>: <span class="code-string">"full"</span>,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="code-string">"target_size_gb"</span>: 100<br>
+                        }<br>
+                        <br>
+                        response = requests.post(url, headers=headers, data=json.dumps(payload))<br>
+                        <span class="code-keyword">print</span>(response.json())
+                    </div>
+                    
+                    <div class="integration-actions">
+                        <button class="btn btn-secondary">Regenerate API Key</button>
+                        <button class="btn btn-primary">Start Analysis</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script>
+        // Panel navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Update active nav item
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show selected panel
+                const panelId = this.getAttribute('data-panel');
+                document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(panelId).classList.add('active');
+            });
+        });
+        
+        // Simulate analysis start
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            if (this.textContent.includes('Start Analysis')) {
+                this.textContent = 'Analyzing...';
+                this.disabled = true;
+                
+                // Simulate analysis progress
+                setTimeout(() => {
+                    this.textContent = 'Analysis Complete';
+                    this.style.backgroundColor = '#30D158';
+                    
+                    // Switch to analysis panel
+                    document.querySelector('[data-panel="analysis"]').click();
+                    
+                    // Reset button after delay
+                    setTimeout(() => {
+                        this.textContent = 'Start Analysis';
+                        this.style.backgroundColor = '';
+                        this.disabled = false;
+                    }, 3000);
+                }, 2000);
+            }
+        });
+        
+        // Slider interactions
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', function() {
+                const value = this.value;
+                const max = this.max;
+                const percentage = (value / max) * 100;
+                
+                // Update label
+                let label;
+                if (this.closest('.control-group')) {
+                    label = this.closest('.control-group').querySelector('.control-label span:last-child');
+                }
+                
+                if (label) {
+                    if (percentage < 30) {
+                        label.textContent = 'Low';
+                    } else if (percentage < 70) {
+                        label.textContent = 'Medium';
+                    } else {
+                        label.textContent = 'High';
+                    }
+                }
+            });
+        });
+        
+        // Card hover effects
+        document.querySelectorAll('.integration-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.2)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+        
+        // Analysis item selection
+        document.querySelectorAll('.analysis-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.analysis-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Chart tab selection
+        document.querySelectorAll('.chart-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
