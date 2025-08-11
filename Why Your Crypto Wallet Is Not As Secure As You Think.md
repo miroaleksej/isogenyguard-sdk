@@ -23,6 +23,9 @@ In ECDSA (the algorithm that secures Bitcoin and other cryptocurrencies), these 
 
 ### Bijection: The Key to Understanding the Vulnerability
 
+![image](https://github.com/user-attachments/assets/fb36c8fb-7b35-4f5a-802c-439a70e91a16)
+
+
 Here, the concept of **bijection** is important. This is a mathematical term meaning that each point in one space corresponds to exactly one point in another space and vice versa.
 
 In ECDSA, there is a bijection between standard digital signatures and a special space called (u_r, u_z). This relationship is described by the following formulas:
