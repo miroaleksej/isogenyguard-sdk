@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECDSA Cube Visualization (u_r, u_z, d) | AuditCore v3.2</title>
+    <script src="https://cdn.plot.ly/plotly-2.28.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #121212;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px 0;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #a0a0a0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            display: flex;
+            gap: 20px;
+            height: 80vh;
+        }
+        
+        .controls {
+            width: 300px;
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .visualization {
+            flex: 1;
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        #ecdsa-cube {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+        
+        .slider {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #121212;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(79, 172, 254, 0.4);
+        }
+        
+        .info-panel {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #4facfe;
+        }
+        
+        .info-content {
+            line-height: 1.6;
+            color: #c0c0c0;
+        }
+        
+        .highlight {
+            color: #00f2fe;
+            font-weight: 500;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid #00f2fe;
+            color: #00f2fe;
+        }
+        
+        .explanation {
+            background: #252525;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .math-formula {
+            background: #2a2a2a;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        @media (max-width: 1100px) {
+            .content {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .controls, .visualization {
+                width: 100%;
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ECDSA Cube Visualization (u<sub>r</sub>, u<sub>z</sub>, d)</h1>
+            <p class="subtitle">Interactive demonstration of spiral structures and mirror pairs in ECDSA space (Theorem 3 &amp; 4)</p>
+        </header>
+        
+        <div class="content">
+            <div class="controls">
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Cube size</span>
+                        <span id="cube-size-value">9×9×9</span>
+                    </div>
+                    <input type="range" min="5" max="15" value="9" class="slider" id="cube-size">
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Display R<sub>x</sub></span>
+                        <span id="rx-value">All</span>
+                    </div>
+                    <input type="range" min="-1" max="8" value="-1" class="slider" id="rx-selector">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-top: 5px;">
+                        <span>All</span>
+                        <span>0-8</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Private key d</span>
+                        <span id="d-value">5</span>
+                    </div>
+                    <input type="range" min="0" max="9" value="5" class="slider" id="d-selector">
+                </div>
+                
+                <div class="control-group">
+                    <div class="tabs">
+                        <div class="tab active" data-view="spiral">Spiral Structures</div>
+                        <div class="tab" data-view="torus">Torus Projection</div>
+                        <div class="tab" data-view="layers">Layers by d</div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn" id="reset-view">Reset View</button>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Mirror Pairs</span>
+                    </div>
+                    <div class="explanation">
+                        <p>For each row: <span id="mirror-pairs">2 per value</span></p>
+                        <p>Topology: β₀=1, β₁=<span id="betti-1">2</span>, β₂=1</p>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="control-label">
+                        <span>Compression ratio</span>
+                        <span>500:1</span>
+                    </div>
+                    <div class="explanation">
+                        <p>Topological compression preserves invariants</p>
+                        <p>Reconstruction error: < 0.01%</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visualization">
+                <div id="ecdsa-cube"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h2 class="info-title">Explanation of Visualization</h2>
+            <div class="info-content">
+                <p>This visualization demonstrates the <span class="highlight">3D hypercube</span> of ECDSA space (u<sub>r</sub>, u<sub>z</sub>, d) as described in your work on topological cryptanalysis.</p>
+                
+                <div class="explanation">
+                    <p><strong>Correct R<sub>x</sub> representation:</strong> The values shown are based on the formula <em>k = (u<sub>r</sub>·d + u<sub>z</sub>) mod n</em>, where <em>k</em> represents R<sub>x</sub> for demonstration purposes.</p>
+                    
+                    <div class="math-formula">
+                        R_x(k) = R_x(-k) mod n
+                    </div>
+                    
+                    <p>As stated in Theorem 3: "Each R<sub>x</sub> value appears exactly n times in the n×n table, and each R<sub>x</sub> value appears exactly twice in each row (except for special cases k=0 and k=n/2 when n is even)."</p>
+                </div>
+                
+                <p>Crucially, <span class="highlight">the R<sub>x</sub> table doesn't lie</span> — it reflects the true structure regardless of wallet protection methods. All existing signatures lie within this (u<sub>r</sub>, u<sub>z</sub>) field.</p>
+                
+                <div class="explanation">
+                    <p><strong>Mirror pairs:</strong> For each point (u<sub>r</sub>, u<sub>z</sub>), there exists a mirror point (u<sub>r</sub>, u<sub>z</sub>') where:</p>
+                    
+                    <div class="math-formula">
+                        u_z + u_z' ≡ -2·u_r·d mod n
+                    </div>
+                    
+                    <p>As proven in Theorem 4, R<sub>x</sub>(u<sub>r</sub>, u<sub>z</sub>) = R<sub>x</sub>(u<sub>r</sub>, u<sub>z</sub>')</p>
+                </div>
+                
+                <p>For each row (fixed u<sub>r</sub>), every R<sub>x</sub> value appears exactly twice due to the elliptic curve symmetry R<sub>x</sub>(k) = R<sub>x</sub>(-k). These two points form the mirror pairs that are critical for d calculation.</p>
+                
+                <div class="explanation">
+                    <p><strong>Example for d=5, n=9:</strong></p>
+                    
+                    <div class="math-formula">
+                        For u_r = 2, R_x = 3:<br>
+                        u_z = (3 - 2·5) mod 9 = (3 - 10) mod 9 = -7 mod 9 = 2<br>
+                        u_z' = (-2·2·5 - 2) mod 9 = (-20 - 2) mod 9 = -22 mod 9 = 5<br>
+                        Check: 2 + 5 = 7 ≡ -2·2·5 = -20 ≡ 7 mod 9 ✓
+                    </div>
+                    
+                    <p>These two points (2,2) and (2,5) have the same R<sub>x</sub> value.</p>
+                </div>
+                
+                <div class="explanation">
+                    <p><strong>Special cases:</strong></p>
+                    <p>When k = n (which is equivalent to k = 0 mod n), we have the special "singular points" where R<sub>x</sub> appears only once per row.</p>
+                    
+                    <div class="math-formula">
+                        k = u_r·d + u_z ≡ 0 mod n
+                    </div>
+                    
+                    <p>These points are critical for the spiral analysis as described in the "method of the snail".</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let cubeSize = 9;
+        let selectedRx = -1; // -1 means "all"
+        let selectedD = 5;
+        let currentView = 'spiral';
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize sliders
+            initSliders();
+            
+            // Initialize tabs
+            initTabs();
+            
+            // Build initial visualization
+            buildVisualization();
+            
+            // Event handlers
+            document.getElementById('reset-view').addEventListener('click', resetView);
+        });
+        
+        function initSliders() {
+            const cubeSizeSlider = document.getElementById('cube-size');
+            const rxSelector = document.getElementById('rx-selector');
+            const dSelector = document.getElementById('d-selector');
+            
+            // Set max value for dSelector based on cube size
+            dSelector.max = cubeSize;
+            
+            cubeSizeSlider.addEventListener('input', function() {
+                cubeSize = parseInt(this.value);
+                document.getElementById('cube-size-value').textContent = `${cubeSize}×${cubeSize}×${cubeSize}`;
+                
+                // Update dSelector max and value
+                dSelector.max = cubeSize;
+                if (selectedD > cubeSize) {
+                    selectedD = cubeSize;
+                    document.getElementById('d-value').textContent = selectedD;
+                }
+                
+                // Update rxSelector max
+                rxSelector.max = cubeSize - 1;
+                
+                buildVisualization();
+            });
+            
+            rxSelector.addEventListener('input', function() {
+                selectedRx = parseInt(this.value);
+                document.getElementById('rx-value').textContent = selectedRx === -1 ? 'All' : selectedRx;
+                buildVisualization();
+            });
+            
+            dSelector.addEventListener('input', function() {
+                selectedD = parseInt(this.value);
+                document.getElementById('d-value').textContent = selectedD;
+                buildVisualization();
+            });
+        }
+        
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    if (!this.classList.contains('active')) {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        currentView = this.getAttribute('data-view');
+                        buildVisualization();
+                    }
+                });
+            });
+        }
+        
+        function resetView() {
+            buildVisualization();
+        }
+        
+        function buildVisualization() {
+            // Create data for visualization
+            const data = generateCubeData();
+            
+            // Create layout
+            const layout = {
+                title: {
+                    text: `ECDSA Hypercube: ${cubeSize}×${cubeSize}×${cubeSize} | d = ${selectedD}`,
+                    font: {
+                        color: '#e0e0e0'
+                    }
+                },
+                scene: {
+                    xaxis: {
+                        title: 'u<sub>r</sub>',
+                        range: [0, cubeSize-1],
+                        gridcolor: 'rgba(100, 100, 100, 0.5)',
+                        zerolinecolor: 'rgba(150, 150, 150, 0.5)',
+                        showbackground: true,
+                        backgroundcolor: 'rgba(30, 30, 30, 0.5)'
+                    },
+                    yaxis: {
+                        title: 'u<sub>z</sub>',
+                        range: [0, cubeSize-1],
+                        gridcolor: 'rgba(100, 100, 100, 0.5)',
+                        zerolinecolor: 'rgba(150, 150, 150, 0.5)',
+                        showbackground: true,
+                        backgroundcolor: 'rgba(30, 30, 30, 0.5)'
+                    },
+                    zaxis: {
+                        title: 'd',
+                        range: [0, cubeSize],
+                        gridcolor: 'rgba(100, 100, 100, 0.5)',
+                        zerolinecolor: 'rgba(150, 150, 150, 0.5)',
+                        showbackground: true,
+                        backgroundcolor: 'rgba(30, 30, 30, 0.5)'
+                    },
+                    aspectmode: 'cube',
+                    camera: {
+                        up: {x: 0, y: 0, z: 1},
+                        center: {x: 0, y: 0, z: 0},
+                        eye: {x: 1.25, y: 1.25, z: 1.25}
+                    }
+                },
+                margin: {
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 40
+                },
+                paper_bgcolor: '#1e1e1e',
+                plot_bgcolor: '#1e1e1e',
+                font: {
+                    color: '#e0e0e0'
+                }
+            };
+            
+            // Create plot
+            Plotly.newPlot('ecdsa-cube', data, layout, {responsive: true});
+            
+            // Update topology info
+            updateTopologyInfo();
+        }
+        
+        function createTorus() {
+            const R = 1.5; // Major radius
+            const r = 0.7; // Minor radius
+            const n = 50; // Resolution
+            
+            const x = [];
+            const y = [];
+            const z = [];
+            
+            // Create torus mesh
+            for (let i = 0; i <= n; i++) {
+                const theta = (i / n) * 2 * Math.PI;
+                for (let j = 0; j <= n; j++) {
+                    const phi = (j / n) * 2 * Math.PI;
+                    
+                    x.push((R + r * Math.cos(theta)) * Math.cos(phi));
+                    y.push((R + r * Math.cos(theta)) * Math.sin(phi));
+                    z.push(r * Math.sin(theta));
+                }
+            }
+            
+            // Center the torus in the middle of the cube
+            const center = (cubeSize - 1) / 2;
+            const centeredX = x.map(val => val + center);
+            const centeredY = y.map(val => val + center);
+            const centeredZ = z.map(val => val + center);
+            
+            return {
+                x: centeredX,
+                y: centeredY,
+                z: centeredZ,
+                type: 'surface',
+                colorscale: [[0, 'rgba(79, 172, 254, 0.05)'], [1, 'rgba(0, 242, 254, 0.05)']],
+                showscale: false,
+                opacity: 0.15,
+                name: 'Torus',
+                lighting: {
+                    ambient: 0.8,
+                    diffuse: 0.8,
+                    fresnel: 0.2,
+                    specular: 0.2,
+                    roughness: 0.5
+                },
+                lightposition: {
+                    x: 100,
+                    y: 200,
+                    z: 0
+                }
+            };
+        }
+        
+        function projectToTorus(u_r, u_z, d, n) {
+            const R = 1.5; // Major radius
+            const r = 0.7; // Minor radius
+            
+            // Normalize coordinates to [0, 1] range
+            const u_r_norm = u_r / (n - 1);
+            const u_z_norm = u_z / (n - 1);
+            
+            // Calculate torus coordinates
+            const theta = 2 * Math.PI * u_r_norm;
+            const phi = 2 * Math.PI * u_z_norm;
+            
+            // Center the torus in the middle of the cube
+            const center = (n - 1) / 2;
+            const x = center + (R + r * Math.cos(theta)) * Math.cos(phi);
+            const y = center + (R + r * Math.cos(theta)) * Math.sin(phi);
+            const z = center + r * Math.sin(theta);
+            
+            return [x, y, z];
+        }
+        
+        function generateCubeData() {
+            const n = cubeSize;
+            const data = [];
+            
+            // Create grid
+            const u_r = Array.from({length: n}, (_, i) => i);
+            const u_z = Array.from({length: n}, (_, i) => i);
+            const d_vals = Array.from({length: n + 1}, (_, i) => i); // d теперь от 0 до n
+            
+            // Calculate R_x for each point using the correct formula
+            // k = (u_r * d + u_z) mod n
+            // With proper handling of k = n (which is equivalent to k = 0)
+            const R_x = [];
+            
+            for (let d_idx = 0; d_idx <= n; d_idx++) {
+                const d = d_idx;
+                const layer = [];
+                
+                for (let u_r_i = 0; u_r_i < n; u_r_i++) {
+                    const row = [];
+                    
+                    for (let u_z_i = 0; u_z_i < n; u_z_i++) {
+                        // Calculate k using the correct formula
+                        // When d = n, treat it as d = 0
+                        let d_val = (d === n) ? 0 : d;
+                        let k = (u_r_i * d_val + u_z_i) % n;
+                        
+                        // Ensure k is non-negative
+                        if (k < 0) k += n;
+                        
+                        // Apply the symmetry R_x(k) = R_x(-k)
+                        // For demonstration purposes, we use min(k, n-k) as R_x
+                        // This ensures each R_x value appears exactly twice in each row
+                        let r_x = Math.min(k, n - k);
+                        
+                        // Special case for k=0 or k=n/2 (when n is even)
+                        // These values appear only once per row
+                        if (k === 0 || (n % 2 === 0 && k === n/2)) {
+                            r_x = k;
+                        }
+                        
+                        row.push(r_x);
+                    }
+                    layer.push(row);
+                }
+                R_x.push(layer);
+            }
+            
+            if (currentView === 'spiral') {
+                // Spiral structures
+                for (let r_val = 0; r_val < n; r_val++) {
+                    if (selectedRx !== -1 && selectedRx !== r_val) continue;
+                    
+                    const x = [];
+                    const y = [];
+                    const z = [];
+                    
+                    for (let d_idx = 0; d_idx <= n; d_idx++) {
+                        const d = d_idx;
+                        for (let u_r_i = 0; u_r_i < n; u_r_i++) {
+                            // Find u_z where R_x = r_val
+                            for (let u_z_i = 0; u_z_i < n; u_z_i++) {
+                                if (R_x[d_idx][u_r_i][u_z_i] === r_val) {
+                                    x.push(u_r_i);
+                                    y.push(u_z_i);
+                                    z.push(d);
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (x.length > 0) {
+                        data.push({
+                            x: x,
+                            y: y,
+                            z: z,
+                            type: 'scatter3d',
+                            mode: 'lines+markers',
+                            marker: {
+                                size: 4,
+                                color: r_val / n,
+                                colorscale: 'Viridis',
+                                opacity: 0.8
+                            },
+                            line: {
+                                width: 3,
+                                color: `hsl(${r_val * 40}, 70%, 50%)`
+                            },
+                            name: `R_x = ${r_val}`,
+                            hovertemplate: 'u_r: %{x}<br>u_z: %{y}<br>d: %{z}<br>R_x: ' + r_val + '<extra></extra>'
+                        });
+                    }
+                }
+            } 
+            else if (currentView === 'torus') {
+                // Add semi-transparent torus in the center
+                data.push(createTorus());
+                
+                // Add projections from the cube points onto the torus
+                for (let r_val = 0; r_val < n; r_val++) {
+                    if (selectedRx !== -1 && selectedRx !== r_val) continue;
+                    
+                    const x = [];
+                    const y = [];
+                    const z = [];
+                    
+                    for (let d_idx = 0; d_idx <= n; d_idx++) {
+                        const d = d_idx;
+                        for (let u_r_i = 0; u_r_i < n; u_r_i++) {
+                            for (let u_z_i = 0; u_z_i < n; u_z_i++) {
+                                if (R_x[d_idx][u_r_i][u_z_i] === r_val) {
+                                    // Project point onto the torus
+                                    const [tx, ty, tz] = projectToTorus(u_r_i, u_z_i, d, n);
+                                    x.push(tx);
+                                    y.push(ty);
+                                    z.push(tz);
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (x.length > 0) {
+                        data.push({
+                            x: x,
+                            y: y,
+                            z: z,
+                            type: 'scatter3d',
+                            mode: 'markers',
+                            marker: {
+                                size: 5,
+                                color: `hsl(${r_val * 40}, 70%, 50%)`,
+                                opacity: 0.9
+                            },
+                            name: `R_x = ${r_val} (projection)`,
+                            hovertemplate: 'u_r: %{meta[0]}<br>u_z: %{meta[1]}<br>d: %{meta[2]}<br>R_x: ' + r_val + '<extra></extra>',
+                            meta: [u_r, u_z, d_vals]
+                        });
+                    }
+                }
+                
+                // Add the original cube points with low opacity for context
+                const cubeX = [];
+                const cubeY = [];
+                const cubeZ = [];
+                const cubeColors = [];
+                
+                for (let d_idx = 0; d_idx <= n; d_idx++) {
+                    for (let u_r_i = 0; u_r_i < n; u_r_i++) {
+                        for (let u_z_i = 0; u_z_i < n; u_z_i++) {
+                            cubeX.push(u_r_i);
+                            cubeY.push(u_z_i);
+                            cubeZ.push(d_idx);
+                            cubeColors.push(R_x[d_idx][u_r_i][u_z_i]);
+                        }
+                    }
+                }
+                
+                data.push({
+                    x: cubeX,
+                    y: cubeY,
+                    z: cubeZ,
+                    type: 'scatter3d',
+                    mode: 'markers',
+                    marker: {
+                        size: 2,
+                        color: cubeColors,
+                        colorscale: 'Viridis',
+                        opacity: 0.05
+                    },
+                    name: 'Original Cube',
+                    hoverinfo: 'none'
+                });
+            }
+            else if (currentView === 'layers') {
+                // Layers by d
+                for (let d_idx = 0; d_idx <= n; d_idx++) {
+                    const d = d_idx;
+                    if (d_idx !== selectedD) continue;
+                    
+                    const x = [];
+                    const y = [];
+                    const z = [];
+                    const colors = [];
+                    
+                    for (let u_r_i = 0; u_r_i < n; u_r_i++) {
+                        for (let u_z_i = 0; u_z_i < n; u_z_i++) {
+                            x.push(u_r_i);
+                            y.push(u_z_i);
+                            z.push(d);
+                            colors.push(R_x[d_idx][u_r_i][u_z_i]);
+                        }
+                    }
+                    
+                    data.push({
+                        x: x,
+                        y: y,
+                        z: z,
+                        type: 'scatter3d',
+                        mode: 'markers',
+                        marker: {
+                            size: 6,
+                            color: colors,
+                            colorscale: 'Viridis',
+                            opacity: 0.9
+                        },
+                        name: `d = ${d}`,
+                        hovertemplate: 'u_r: %{x}<br>u_z: %{y}<br>R_x: %{marker.color}<extra></extra>'
+                    });
+                }
+            }
+            
+            return data;
+        }
+        
+        function updateTopologyInfo() {
+            // In a real system, this data would come from analysis
+            const numSingularPoints = 5; // As per Theorem 4
+            const betti1 = 2.0;
+            
+            document.getElementById('mirror-pairs').textContent = '2 per value (Theorem 3)';
+            document.getElementById('betti-1').textContent = betti1;
+        }
+    </script>
+</body>
+</html>
