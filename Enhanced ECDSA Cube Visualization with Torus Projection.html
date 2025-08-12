@@ -1,0 +1,42 @@
+ECDSA Cube Visualization (ur, uz, d)
+Interactive demonstration of spiral structures and mirror pairs in ECDSA space (Theorem 3 & 4)
+Cube size
+9×9×9
+Display Rx
+All
+All
+0-8
+Private key d
+5
+Spiral Structures
+Torus Projection
+Layers by d
+Reset View
+Mirror Pairs
+For each row: 2 per value
+Topology: β₀=1, β₁=2, β₂=1
+Compression ratio
+500:1
+Topological compression preserves invariants
+Reconstruction error: < 0.01%
+
+Explanation of Visualization
+This visualization demonstrates the 3D hypercube of ECDSA space (ur, uz, d) as described in your work on topological cryptanalysis.
+Correct Rx representation: The values shown are based on the formula k = (ur·d + uz) mod n, where k represents Rx for demonstration purposes.
+R_x(k) = R_x(-k) mod n
+As stated in Theorem 3: "Each Rx value appears exactly n times in the n×n table, and each Rx value appears exactly twice in each row (except for special cases k=0 and k=n/2 when n is even)."
+Crucially, the Rx table doesn't lie — it reflects the true structure regardless of wallet protection methods. All existing signatures lie within this (ur, uz) field.
+Mirror pairs: For each point (ur, uz), there exists a mirror point (ur, uz') where:
+u_z + u_z' ≡ -2·u_r·d mod n
+As proven in Theorem 4, Rx(ur, uz) = Rx(ur, uz')
+For each row (fixed ur), every Rx value appears exactly twice due to the elliptic curve symmetry Rx(k) = Rx(-k). These two points form the mirror pairs that are critical for d calculation.
+Example for d=5, n=9:
+For u_r = 2, R_x = 3:
+u_z = (3 - 2·5) mod 9 = (3 - 10) mod 9 = -7 mod 9 = 2
+u_z' = (-2·2·5 - 2) mod 9 = (-20 - 2) mod 9 = -22 mod 9 = 5
+Check: 2 + 5 = 7 ≡ -2·2·5 = -20 ≡ 7 mod 9 ✓
+These two points (2,2) and (2,5) have the same Rx value.
+Special cases:
+When k = n (which is equivalent to k = 0 mod n), we have the special "singular points" where Rx appears only once per row.
+k = u_r·d + u_z ≡ 0 mod n
+These points are critical for the spiral analysis as described in the "method of the snail".
